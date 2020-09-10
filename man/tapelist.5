@@ -1,0 +1,111 @@
+'\" t
+.\"     Title: tapelist
+.\"    Author: James da Silva <jds@amanda.org>
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 12/01/2017
+.\"    Manual: File formats and conventions
+.\"    Source: Amanda 3.5.1
+.\"  Language: English
+.\"
+.TH "TAPELIST" "5" "12/01/2017" "Amanda 3\&.5\&.1" "File formats and conventions"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+tapelist \- The list of Amanda volumes in use
+.SH "DESCRIPTION"
+.PP
+The
+\fItapelist\fR
+file contains the list of tapes in active use\&. This file is not ordinarily edited or examined manually\&. Its format may change, or it may be removed altogether, in future versions of Amanda\&. It contains lines of the form:
+.PP
+.nf
+YYYYMMDDHHMMSS label flags [BARCODE:barcode] [META:meta] [BLOCKSIZE:blocksize] [POOL:pool] [STORAGE:storage] [CONFIG:config] [#comment]
+.fi
+.PP
+Where
+\fIYYYYMMDDHHMMSS\fR
+is the time the tape was written,
+\fIlabel\fR
+is a label for the tape as written by
+\fBamlabel\fR
+and
+\fIflags\fR
+is one of "reuse" or "no\-reuse" and tells Amanda whether the tape may be reused\&. A non\-reusable tape will not be overwritten, even if it is older than
+\fBdumpcycle\fR
+dumps\&. See the
+\fBreuse\fR
+options of
+\fBamadmin\fR(8)\&.
+.PP
+The optional barcode is prefixed with \*(AqBARCODE\*(Aq if the volume have a barcode\&.
+.PP
+The optional meta label is prefixed with \*(AqMETA\*(Aq if the volume is on a meta volume\&.
+.PP
+The optional blocksize is prefixed with \*(AqBLOCKSIZE\*(Aq\&.
+.PP
+The optional pool is prefixed with \*(AqPOOL\*(Aq, it is the name of the tape\-pool\&.
+.PP
+The optional storage is prefixed with \*(AqSTORAGE\*(Aq, it is the name of the storage\&.
+.PP
+The optional config is prefixed with \*(AqCONFIG\*(Aq, it is name of the config that
+.PP
+is using that volume\&. This is useful to share the tapelist across multiple config\&.
+.PP
+The optional comment is prefixed with a \*(Aq#\*(Aq and continues to the end of the line\&.
+.PP
+Amanda will maintain this comment until the tape is overwritten\&. Note that comments are not allowed on blank lines\&.
+.PP
+An entry without POOL is in the tape\-pool with the name of config running name\&.
+.PP
+A new labelled volume have a timestamp of "0" and have no STORAGE and CONFIG\&.
+.PP
+A used volume with timestamp != "0" without STORAGE is in the storage with the name of the running config
+.PP
+A used volume with timestamp != "0" without CONFIG is in the running config\&.
+.PP
+It is possible to share the same tapelist across multiple config If the POOL, STORAGE and CONFIG are correctly set\&.
+.PP
+The file is sorted such that the most\-recently used tape appears on the first line, and the oldest tape appears on the last line\&.
+.PP
+\fBAmdump\fR
+and
+\fBamflush\fR
+will by default refuse to write to an unlabeled tape, or to a labeled tape that is considered active or marked "no\-reuse"\&. There must be more tapes in active rotation (see the
+\fBtapecycle\fR
+option) than there are runs in the backup cycle (see the
+\fBdumpcycle\fR
+option) to prevent overwriting a backup image that would be needed to do a full recovery\&.
+.SH "SEE ALSO"
+.PP
+\fBamanda\fR(8),
+\fBamanda.conf\fR(5)
+.PP
+The Amanda Wiki:
+: http://wiki.zmanda.com/
+.SH "AUTHORS"
+.PP
+\fBJames da Silva\fR <\&jds@amanda\&.org\&>
+.PP
+\fBStefan G\&. Weichinger\fR <\&sgw@amanda\&.org\&>
+.PP
+\fBDustin J\&. Mitchell\fR <\&dustin@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE

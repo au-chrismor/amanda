@@ -1,0 +1,119 @@
+'\" t
+.\"     Title: amanda-auth-ssl
+.\"    Author: Jean-Louis Martineau <martineau@zmanda.com>
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 12/01/2017
+.\"    Manual: Miscellanea
+.\"    Source: Amanda 3.5.1
+.\"  Language: English
+.\"
+.TH "AMANDA\-AUTH\-SSL" "7" "12/01/2017" "Amanda 3\&.5\&.1" "Miscellanea"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+amanda-auth-ssl \- SSL Communication/Authentication methods between Amanda server and client
+.SH "DESCRIPTION"
+.PP
+This authenticate method use ssl certificate to authenticate host, all transfer over the network is encrypted\&.
+.PP
+Each amanda client/server must have its own certificate signed by the amanda CA certificate\&.
+.SH "COMPILATION AND GENERAL INFORMATION"
+.PP
+Amanda must be configure with \-\-with\-ssl\-security
+.SH "SERVER/CLIENT CONFIGURATION"
+.PP
+In
+\fBamanda\&.conf\fR
+and
+\fBamanda\-client\&.conf\fR\&.
+.PP
+\fBssl\-dir\fR
+.RS 4
+The directoty where amanda store all the certificates\&. A good value is
+\fB~/amanda\-ssl\fR\&.
+.RE
+.PP
+\fBssl\-check\-certificate\-host\fR
+.RS 4
+Check the peer hostname match the certificate host name\&.
+.RE
+.PP
+\fBssl\-check\-fingerprint\fR
+.RS 4
+Check the fingerprint of the certificate is the same as the fingerprint we already have for that host\&.
+.RE
+.PP
+\fBssl\-check\-host\fR
+.RS 4
+Do the bsd check, dns name of peer IP is the hostname we connect to\&.
+.RE
+.SH "FILESYSTEM LAYOUT FOR CERTIFICATES"
+.nf
+$SSL_DIR/CA/crt\&.pem                   # CA certificate that signed
+                                        all certificates\&.
+$SSL_DIR/CA/private/key\&.pem           # CA private key
+                                        (on server only)
+$SSL_DIR/me/crt\&.pem                   # public certificate of the host
+$SSL_DIR/me/private/key\&.pem           # private key of the host
+$SSL_DIR/me/fingerprint               # fingerprint of my certificate
+$SSL_DIR/remote/HOSTNAME/fingerprint  # fingerprint of the HOSTNAME
+                                        certificate
+.fi
+.PP
+On the
+\fBHOSTNAME\fR
+host,
+\fB$SSL_DIR/remote/HOSTNAME\fR
+is a symbolic link to
+\fB\&.\&./me\fR\&.
+.SH "PROGRAM TO HELP CONFIGURATION"
+.PP
+The
+\fBamssl\fR
+program is a tool to manage the certificate\&.
+.SH "SEE ALSO"
+.PP
+\fBamanda\fR(8),
+\fBamanda.conf\fR(5),
+\fBamanda-client.conf\fR(5),
+\fBdisklist\fR(5),
+\fBamdump\fR(8),
+\fBamrecover\fR(8),
+\fBamssl\fR(8),
+\fBamanda-auth\fR(7)
+.PP
+The Amanda Wiki:
+: http://wiki.zmanda.com/
+.SH "AUTHORS"
+.PP
+\fBJean\-Louis Martineau\fR <\&martineau@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE
+.PP
+\fBDustin J\&. Mitchell\fR <\&dustin@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE
+.PP
+\fBPaul Yeatman\fR <\&pyeatman@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE

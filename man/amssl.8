@@ -1,0 +1,258 @@
+'\" t
+.\"     Title: amssl
+.\"    Author: James da Silva <jds@amanda.org>
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 12/01/2017
+.\"    Manual: System Administration Commands
+.\"    Source: Amanda 3.5.1
+.\"  Language: English
+.\"
+.TH "AMSSL" "8" "12/01/2017" "Amanda 3\&.5\&.1" "System Administration Commands"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+amssl \- Program to manage amanda ssl certificates
+.SH "SYNOPSIS"
+.HP \w'\fBamssl\fR\ 'u
+\fBamssl\fR [\-\-client] [\-\-init | \-\-create\-ca | \-\-create\-server\-cert\ \fIserver\-host\fR | \-\-create\-client\-cert\ \fIclient\-host\fR\ [\-\-server\ \fIserver\-host\fR] ] [\-\-country\ \fIcountry\-code\fR] [\-\-state\ \fIstate\fR] [\-\-locality\ \fIlocality\fR] [\-\-organisation\ \fIorganisation\fR] [\-\-organisation\-unit\ \fIorganisation\-unit\fR] [\-\-common\ \fIcommon\-name\fR] [\-\-email\ \fIemail\fR] [\fB\-o\fR\ \fIconfigoption\fR...] [\-\-config\ \fIconfig\fR]
+.SH "DESCRIPTION"
+.PP
+\fBamssl\fR
+is a program to manage amanda ssl certificates for the
+\fBssl\fR
+auth\&. It can create self\-signed CA, server certificate and client certificates\&.
+.SH "OPTIONS"
+.PP
+\fB\-\-create\-ca\fR
+.RS 4
+Create a self\-signed CA\&.
+.RE
+.PP
+\fB\-\-create\-server\-cert\fR
+.RS 4
+Create a server certificate\&.
+.RE
+.PP
+\fB\-\-create\-client\-cert\fR \fICLIENT\-HOSTNAME\fR
+.RS 4
+Create a client certificate\&.
+.RE
+.PP
+\fB\-\-server\fR \fISERVER\-HOSTNAME\fR
+.RS 4
+The amanda server to connect to\&.
+.RE
+.PP
+\fB\-\-batch\fR
+.RS 4
+use the certificate fields set in the initialization, there is confirmation\&.
+.sp
+This option is useless if one the fields was not set in the initiatization\&.
+.RE
+.PP
+\fB\-\-client\fR
+.RS 4
+When running
+\fBamssl\fR
+on a client\&.
+.RE
+.PP
+\fB\-\-init\fR
+.RS 4
+Initialize the host\&.
+.RE
+.PP
+The following options are the one needed by a certificate
+.PP
+\fB\-\-country\fR
+.RS 4
+The two letter country code\&.
+.RE
+.PP
+\fB\-\-state\fR
+.RS 4
+The State\&.
+.RE
+.PP
+\fB\-\-locality\fR
+.RS 4
+The locality\&.
+.RE
+.PP
+\fB\-\-organisation\fR
+.RS 4
+The organisation
+.RE
+.PP
+\fB\-\-organisation\-unit\fR
+.RS 4
+The organisation unit\&.
+.RE
+.PP
+\fB\-\-common\fR
+.RS 4
+The common name\&.
+.RE
+.PP
+\fB\-\-email\fR
+.RS 4
+The email\&.
+.RE
+.SH "INITIALISATION"
+.PP
+Must be run once before any other command
+.PP
+Create a template openssl\&.cnf file and a configuration file with the value provided, they are used in future command so you do not need to enter them at every invocation\&.
+.PP
+The value provided must be the one you want in the certificate\&.
+.HP \w'\fBamssl\fR\ 'u
+\fBamssl\fR [\-\-client] \-\-init [\-\-country\ \fIcountry\-code\fR] [\-\-state\ \fIstate\fR] [\-\-locality\ \fIlocality\fR] [\-\-organisation\ \fIorganisation\fR] [\-\-organisation\-unit\ \fIorganisation\-unit\fR] [\-\-common\ \fIcommon\-name\fR] [\-\-email\ \fIemail\fR] [\fB\-o\fR\ \fIconfigoption\fR...] [\-\-config\ \fIconfig\fR]
+.PP
+A client is initialized with the
+\-\-client
+options\&.
+.PP
+Create
+.sp
+.nf
+     \fB$SSL_DIR/openssl\&.cnf\&.template\fR
+     \fB$SSL_DIR/openssl\&.data\fR
+.fi
+.SH "CREATE A SELF-SIGNED CA"
+.PP
+Create a self\-signed CA\&.
+.HP \w'\fBamssl\fR\ 'u
+\fBamssl\fR \-\-create\-ca [\-\-batch] [\-\-config\ \fICONFIG\fR]
+.PP
+You can also provide all options of the initialization step
+.PP
+You must enter a new CA passphrase, you must keep it secret and remember it\&. It will be required every time you need to create a new cetificate\&.
+.PP
+After you enter the passphrase, it will be asked 3 other times\&.
+.PP
+Create
+.sp
+.nf
+     $SSL_DIR/CA/crt\&.pem
+     $SSL_DIR/CA/private/key\&.pem
+.fi
+.SH "CREATE THE SERVER CERTIFICATE"
+.PP
+Create the amanda server certificate\&.
+.HP \w'\fBamssl\fR\ 'u
+\fBamssl\fR \-\-create\-server\-cert\ \fIHOSTNAME\fR [\-\-batch] [\-\-config\ \fICONFIG\fR]
+.PP
+You can also provide all options of the initialization step
+.PP
+The CA passphrase is asked\&.
+.PP
+Create
+.sp
+.nf
+     $SSL_DIR/me/crt\&.pem
+     $SSL_DIR/me/fingerprint
+     $SSL_DIR/me/private/key\&.pem
+     $SSL_DIR/remote/\fIHOSTNAME\fR \-> \&.\&./me
+.fi
+.SH "CREATE A CLIENT CERTIFICATE"
+.PP
+Create a client certificate, sign it by the CA certicate on the server and both server and client learn the remore fingerprint\&.
+.PP
+DO NOT RUN IT ON SERVER\&. This will detroy the server certificate
+.PP
+It require to run amssl on the server and client at the same time
+.PP
+\fBssl\-dir\fR
+must be set in amanda\-client\&.conf on the client\&.
+.PP
+Both server and client must already be initialized\&.
+.PP
+Run on the server:
+.HP \w'\fBamssl\fR\ 'u
+\fBamssl\fR \-\-create\-client\-cert\ \fIclient\-host\fR [\-\-config\ \fICONFIG\fR]
+.PP
+It wait for the client to connect and then sign the client certificate, The CA passphrase is asked\&.
+.PP
+Run on the client:
+.HP \w'\fBamssl\fR\ 'u
+\fBamssl\fR \-\-client \-\-create\-client\-cert\ \fICLIENT\-HOST\fR \-\-server\ \fISERVER\-HOST\fR [\-\-batch] [\-\-config\ \fICONFIG\fR]
+.PP
+Create on server
+.sp
+.nf
+     $SSL_DIR/remote/\fICLIENT\-HOST\fR/fingerprint
+.fi
+.PP
+Create on client
+.sp
+.nf
+     $SSL_DIR/me/crt\&.pem
+     $SSL_DIR/me/fingerprint
+     $SSL_DIR/me/private/key\&.pem
+     $SSL_DIR/remote/\fISERVER\-HOST\fR/fingerprint
+.fi
+.SH "EXAMPLE"
+.PP
+\fBInitialize the server\fR
+.RS 4
+amssl \-\-init \-\-country US \-\-state California \-\-locality Sunnyvale \-\-organisation zmanda \-\-organistion\-unit engineering \-\-common boss \-\-email \*(Aqemail@email\&.com\*(Aq
+.RE
+.PP
+\fBCreate the CA on the server\fR
+.RS 4
+amssl \-\-create\-ca
+.RE
+.PP
+\fBCreate the server certificate\fR
+.RS 4
+amssl \-\-create\-server\-cert server\&.zmanda\&.com
+.RE
+.PP
+\fBCreate a client certificate\fR
+.RS 4
+.PP
+\fBOn server:\fR
+.RS 4
+amssl \-\-create\-client\-cert client\&.zmanda\&.com
+.RE
+.PP
+\fBOn client:\fR
+.RS 4
+amssl \-\-client \-\-init \-\-country US \-\-state California \-\-locality Sunnyvale \-\-organisation zmanda \-\-organistion\-unit engineering \-\-common boss \-\-email \*(Aqemail@email\&.com\*(Aq
+.sp
+amssl \-\-client \-\-create\-client\-cert client\&.zmanda\&.com \-\-server server\&.zmanda\&.com
+.RE
+.RE
+.SH "SEE ALSO"
+.PP
+\fBamanda\fR(8),
+\fBamanda.conf\fR(5),
+\fBamanda-client.conf\fR(5),
+\fBamanda\fR(8),
+\fBamanda-auth\fR(7),
+\fBamanda-auth-ssl\fR(7)
+.PP
+The Amanda Wiki:
+: http://wiki.zmanda.com/
+.SH "AUTHORS"
+.PP
+\fBJames da Silva\fR <\&jds@amanda\&.org\&>
+.PP
+\fBStefan G\&. Weichinger\fR <\&sgw@amanda\&.org\&>

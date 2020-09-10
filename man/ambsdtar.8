@@ -1,0 +1,222 @@
+'\" t
+.\"     Title: ambsdtar
+.\"    Author: Jean-Louis Martineau <martineau@zmanda.com>
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 12/01/2017
+.\"    Manual: System Administration Commands
+.\"    Source: Amanda 3.5.1
+.\"  Language: English
+.\"
+.TH "AMBSDTAR" "8" "12/01/2017" "Amanda 3\&.5\&.1" "System Administration Commands"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+ambsdtar \- Amanda Application to interface with BSD Tar
+.SH "DESCRIPTION"
+.PP
+Ambsdtar is an Amanda Application API script\&. It should not be run by users directly\&. It uses BSD Tar to backup and restore data\&.
+.PP
+The
+\fBdiskdevice\fR
+in the disklist (DLE) must be the directory to backup\&.
+.PP
+Extracting backup never remove files\&. If a file where present in the level 0 backup, you removed it, made a level 1 backup, then after extracting both levels, the file will be present\&.
+.SH "PROPERTIES"
+.PP
+This section lists the properties that control ambsdtar\*(Aqs functionality\&. See
+\fBamanda-applications\fR(7)
+for information on application properties and how they are configured\&.
+.PP
+COMMAND\-OPTIONS
+.RS 4
+If set, theses options are passed asis to gtar\&. Each option must be a different value of the property\&. Some option can break how amanda do backup, use it with care\&.
+
+Use:
+.nf
+  property "COMMAND\-OPTIONS" "\-\-foo" "bar"
+.fi
+
+Do not use:
+.nf
+  property "COMMAND\-OPTIONS" "\-\-foo bar"
+.fi
+.RE
+.PP
+DIRECTORY
+.RS 4
+
+If set, bsdtar will backup from that directory instead of the \fIdiskdevice\fR set by the DLE\&. On restore, the data is restore in that directory instead of the current working directory\&.
+.RE
+.PP
+SPARSE
+.RS 4
+
+If "YES", the default, it use the \-S option of bsdtar when restoring to create sparse files\&.
+.RE
+.PP
+STATE\-DIR
+.RS 4
+
+The directory where ambsdtar stores the database it uses to generate incremental dumps\&.  The default is set when Amanda is built\&.
+.RE
+.PP
+BSDTAR\-PATH
+.RS 4
+
+The path to the bsdtar binary\&.  The default is set when Amanda is built\&.
+.RE
+.PP
+ONE\-FILE\-SYSTEM
+.RS 4
+
+If "YES" (the default), do not allow bsdtar to cross filesystem boundaries\&. If "NO", bsdtar will cross filesystem boundaries\&.  This corresponds to the \fI\-\-one\-filesystem\fR option of bsdtar\&.
+.RE
+.PP
+TAR\-BLOCKSIZE
+.RS 4
+
+Block size of Nx512 bytes (default N=20)\&.  This corresponds to the \fI\-\-blocking\-factor\fR option of bsdtar\&.
+.RE
+.PP
+EXIT\-HANDLING
+.RS 4
+
+List which exit status of gtar are good or bad\&. eg\&. "1=GOOD 2=BAD", exit status of 1 will produce a good backup, exit status of 2 will give an error\&.
+.RE
+.PP
+NORMAL
+.RS 4
+
+List all regex (POSIX Extended Regular Expression syntax) that are normal output from gtar\&. These output are in the "FAILED DUMP DETAILS" section of the email report if the dump result is STRANGE or FAILED\&. Default values:
+.nf
+  "^could not open conf file"
+  "^Elapsed time:"
+  "^Throughput"
+  ": socket ignored$"
+  ": File \&.* shrunk by [0\-9][0\-9]* bytes, padding with zeros"
+  ": Cannot add file \&.*: No such file or directory$"
+  ": Error exit delayed from previous errors"
+.fi
+To treat one of these default patterns differently, specify it explicitly in a different property\&.
+.RE
+.PP
+IGNORE
+.RS 4
+
+List all regex (POSIX Extended Regular Expression syntax) that amanda ignore\&. These output are never in the email report\&. Default values:
+.nf
+  ": Directory is new$"
+  ": Directory has been renamed"
+.fi
+To treat one of these default patterns differently, specify it explicitly in a different property\&.
+.RE
+.PP
+STRANGE
+.RS 4
+
+List all regex (POSIX Extended Regular Expression syntax) that are strange output from gtar\&. All gtar output that doesn\*(Aqt match a normal or ignore regex are strange by default\&. The result of the dump is STRANGE if gtar produce a strange output\&. These output are in the "FAILED DUMP DETAILS" section of the email report\&.
+.RE
+.PP
+VERBOSE
+.RS 4
+
+Default: "NO"\&. If "YES", ambsdtar print more verbose debugging message and can leave temporary files in AMANDA_TMPDIR\&.
+.RE
+.SH "INCLUDE AND EXCLUDE LISTS"
+.PP
+This application supplies exclude lists via the
+\fBGNU\-tar\fR\fB\-\-exclude\-from\fR
+option\&. This option accepts normal shell\-style wildcard expressions, using
+\fB*\fR
+to match any number of characters and
+\fB?\fR
+to match a single character\&. Character classes are represented with
+\fB[\&.\&.]\fR, which will match any of the characters in the brackets\&. Expressions can be "anchored" to the base directory of the DLE by prefixing them with "\&./"\&. Without this prefix, they will match at any directory level\&. Expressions that begin or end with a "/" will not match anything: to completely exclude a directory, do not include the trailing slash\&. Example expressions:
+.sp
+.nf
+  \&./temp\-files           # exclude top\-level directory entirely
+  \&./temp\-files/          # BAD: does nothing
+  /temp\-files            # BAD: does nothing
+  \&./temp\-files/*         # exclude directory contents; include directory
+  temp\-files             # exclude anything named "temp\-files"
+  generated\-*            # exclude anything beginning with "generated\-"
+  *\&.iso                  # exclude ISO files
+  proxy/local/cache      # exclude "cache" in dir "local" in "proxy"
+.fi
+.PP
+Similarly, include expressions are supplied to
+\fBGNU\-tar\fR\*(Aqs
+\fB\-\-files\-from\fR
+option\&. This option ordinarily does not accept any sort of wildcards, but ambsdtar "manually" applies glob pattern matching to include expressions with only one slash\&. The expressions must still begin with "\&./", so this effectively only allows expressions like "\&./[abc]*" or "\&./*\&.txt"\&.
+.SH "EXAMPLE"
+.PP
+.nf
+  define application\-tool app_ambsdtar {
+    plugin "ambsdtar"
+
+    property "BSDTAR\-PATH" "/bin/bsdtar"
+    property "STATE\-DIR" "/xxx/yyy"
+    property "ONE\-FILE\-SYSTEM" "YES"
+    property "TAR\-BLOCKSIZE" "20"
+    property "EXIT\-HANDLING" "1=GOOD 2=BAD"
+    # change a default NORMAL regex to a STRANGE regex\&.
+    property "STRANGE" ": socket ignored$"
+    # add three new IGNORE regex
+    property "IGNORE" ": Directory is new$"
+    property append "IGNORE" ": Directory has been renamed"
+    property append "IGNORE" "file changed as we read it$"
+  }
+.fi
+A dumptype using this application might look like:
+.sp
+.nf
+  define dumptype ambsdtar_app_dtyp {
+    global
+    program "APPLICATION"
+    application "app_ambsdtar"
+  }
+.fi
+Note that the
+\fIprogram\fR
+parameter must be set to
+\fI"APPLICATION"\fR
+to use the
+\fIapplication\fR
+parameter\&.
+.SH "SEE ALSO"
+.PP
+\fBamanda\fR(8),
+\fBtar\fR(1),
+\fBamanda.conf\fR(5),
+\fBamanda-applications\fR(7)
+.PP
+The Amanda Wiki:
+: http://wiki.zmanda.com/
+.SH "AUTHORS"
+.PP
+\fBJean\-Louis Martineau\fR <\&martineau@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE
+.PP
+\fBDustin J\&. Mitchell\fR <\&dustin@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE

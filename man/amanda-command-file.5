@@ -1,0 +1,314 @@
+'\" t
+.\"     Title: amanda-command-file
+.\"    Author: Jean-Louis Martineau <martineau@zmanda.com>
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 12/01/2017
+.\"    Manual: File formats and conventions
+.\"    Source: Amanda 3.5.1
+.\"  Language: English
+.\"
+.TH "AMANDA\-COMMAND\-FIL" "5" "12/01/2017" "Amanda 3\&.5\&.1" "File formats and conventions"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+amanda-command-file \- Keep status of outgoing dle commands
+.SH "DESCRIPTION"
+.PP
+The
+\fIcommand\-file\fR
+file keep information of outgoing dumps commands, dumps to flush from holding disk to storage, dumps to copy (vault) from one storage to another, dumps with outgoing restore request\&.
+.PP
+The file is in text\&. The first line is the version of the file, the second line is an id that increment on each new insertion in the file\&.
+.PP
+Each following line start with an id followed by one the keywords:
+.PP
+\fBFLUSH\fR
+.RS 4
+Entry that list a holding file and a storage where it must be flushed\&.
+.RE
+.PP
+\fBCOPY\fR
+.RS 4
+Entry that list a dump from a storage and a storage where to copy it (vault)\&.
+.RE
+.PP
+\fBRESTORE\fR
+.RS 4
+Entry that list a dump from a storage that have a restore request\&. An entry is automatically removed 24 hours after it is created\&.
+.RE
+.PP
+Amanda never overwrite a volume if one its dump have a command in the
+\fIcommand\-file\fR\&.
+.SH "FLUSH LINE"
+.nf
+id \fBFLUSH\fR config holding\-file hostname diskname dump\-timestamp dump\-level storage WORKING:pid STATUS.fi
+.PP
+id
+.RS 4
+The id of the command\&.
+.RE
+.PP
+FLUSH
+.RS 4
+The FLUSH keyword\&.
+.RE
+.PP
+config
+.RS 4
+The config to which that command apply\&.
+.RE
+.PP
+holding\-file
+.RS 4
+The holding\-file to flush\&.
+.RE
+.PP
+hostname
+.RS 4
+The hostname of the dump\&.
+.RE
+.PP
+diskname
+.RS 4
+The diskname of the dump\&.
+.RE
+.PP
+dump\-timestamp
+.RS 4
+The timestamp of the dump\&.
+.RE
+.PP
+dump\-level
+.RS 4
+The level of the dump\&.
+.RE
+.PP
+storage
+.RS 4
+The storage where to flush the dump\&.
+.RE
+.PP
+WORKING:pid
+.RS 4
+The pid of the process doing the flush, or 0\&.
+.RE
+.PP
+STATUS
+.RS 4
+TODO or DONE\&.
+.RE
+.SH "COPY LINE"
+.nf
+id \fBCOPY\fR config src\-storage src\-pool src\-label src\-fileno src\-labels\-str start\-time hostname diskname dump\-timestamp dump\-level dest\-storage WORKING:pid STATUS.fi
+.PP
+id
+.RS 4
+The id of the command\&.
+.RE
+.PP
+COPY
+.RS 4
+The COPY keyword\&.
+.RE
+.PP
+config
+.RS 4
+The config to which that command apply\&.
+.RE
+.PP
+src\-srorage
+.RS 4
+The storage where to find the dump\&.
+.RE
+.PP
+src\-pool
+.RS 4
+The pool where to find the dump\&.
+.RE
+.PP
+src\-label
+.RS 4
+The label of the first part of the dump
+.RE
+.PP
+src\-fileno
+.RS 4
+The fileno of the first part of the dump
+.RE
+.PP
+src\-labels\-str
+.RS 4
+The list of all source labels required
+.RE
+.PP
+start\-time
+.RS 4
+When to start the copy
+.RE
+.PP
+hostname
+.RS 4
+The hostname of the dump\&.
+.RE
+.PP
+diskname
+.RS 4
+The diskname of the dump\&.
+.RE
+.PP
+dump\-timestamp
+.RS 4
+The timestamp of the dump\&.
+.RE
+.PP
+dump\-level
+.RS 4
+The level of the dump\&.
+.RE
+.PP
+dest\-storage
+.RS 4
+The storage where to copy the dump\&.
+.RE
+.PP
+WORKING:pid
+.RS 4
+The pid of the process doing the copy, or 0\&.
+.RE
+.PP
+STATUS
+.RS 4
+TODO or DONE\&.
+.RE
+.SH "RESTORE LINE"
+.PP
+To restore from a storage:
+.sp
+.nf
+id \fBRESTORE\fR config src\-storage src\-pool src\-label    src\-fileno expire hostname diskname dump\-timestamp dump\-level WORKING:pid STATUS.fi
+.PP
+or to restore from a holding file:
+.sp
+.nf
+id \fBRESTORE\fR config HOLDING     HOLDING  holding\-file 0          expire hostname diskname dump\-timestamp dump\-level WORKING:pid STATUS.fi
+
+.PP
+id
+.RS 4
+The id of the command\&.
+.RE
+.PP
+RESTORE
+.RS 4
+The RESTORE keyword\&.
+.RE
+.PP
+config
+.RS 4
+The config to which that command apply\&.
+.RE
+.PP
+src\-srorage
+.RS 4
+The storage where to find the dump\&.
+.RE
+.PP
+src\-pool
+.RS 4
+The pool where to find the dump\&.
+.RE
+.PP
+src\-label
+.RS 4
+The label of the first part of the dump\&.
+.RE
+.PP
+HOLDING
+.RS 4
+The HOLDING keyword\&.
+.RE
+.PP
+holding\-file
+.RS 4
+The full path of the holding file\&.
+.RE
+.PP
+src\-fileno
+.RS 4
+The fileno of the first part of the dump
+.RE
+.PP
+expire
+.RS 4
+When this command expire and can be automatically removed from the file\&.
+.RE
+.PP
+src\-labels\-str
+.RS 4
+The list of all source labels required
+.RE
+.PP
+start\-time
+.RS 4
+When to start the copy
+.RE
+.PP
+hostname
+.RS 4
+The hostname of the dump\&.
+.RE
+.PP
+diskname
+.RS 4
+The diskname of the dump\&.
+.RE
+.PP
+dump\-timestamp
+.RS 4
+The timestamp of the dump\&.
+.RE
+.PP
+dump\-level
+.RS 4
+The level of the dump\&.
+.RE
+.PP
+WORKING:pid
+.RS 4
+The pid of the process doing the copy, or 0\&.
+.RE
+.PP
+STATUS
+.RS 4
+TODO or DONE\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBamanda\fR(8),
+\fBamanda.conf\fR(5)
+.PP
+The Amanda Wiki:
+: http://wiki.zmanda.com/
+.SH "AUTHOR"
+.PP
+\fBJean\-Louis Martineau\fR <\&martineau@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE

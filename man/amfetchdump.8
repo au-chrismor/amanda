@@ -1,0 +1,317 @@
+'\" t
+.\"     Title: amfetchdump
+.\"    Author: John Stange <building@nap.edu>
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 12/01/2017
+.\"    Manual: System Administration Commands
+.\"    Source: Amanda 3.5.1
+.\"  Language: English
+.\"
+.TH "AMFETCHDUMP" "8" "12/01/2017" "Amanda 3\&.5\&.1" "System Administration Commands"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+amfetchdump \- extract backup images from multiple Amanda tapes\&.
+.SH "SYNOPSIS"
+.HP \w'\fBamfetchdump\fR\ 'u
+\fBamfetchdump\fR [\-c | \-C | \-l] [\-p | \-n] [\-a] [\-O\ \fIdirectory\fR] [\-d\ \fIdevice\fR] [\-h | \-\-header\-file\ \fIfilename\fR | \-\-header\-fd\ \fIfd\fR] [\-\-release\-tapes | \-\-reserve\-tapes] [\-\-decompress | \-\-no\-decompress | \-\-server\-decompress | \-\-client\-decompress] [{\-\-extract\ |\ \-\-extract\-client=\fIHOSTNAME\fR}\ \-\-target\fI\ target\fR\ [\-\-data\-path\fI\ amanda|directtcp\fR]\ [\-\-run\-client\-scripts]\ [\-\-prev\-level\ \fIlevel\fR]\ [\-\-next\-level\ \fIlevel\fR]\ [\-\-application\-property\ \fINAME=VALUE\fR]*\ [\-\-include\-file\ \fIfile\fR]*\ [\-\-include\-list\ \fIfilename\fR]*\ [\-\-include\-list\-glob\ \fIfilename\fR]*\ [\-\-exclude\-file\ \fIfile\fR]*\ [\-\-exclude\-list\ \fIfilename\fR]*\ [\-\-exclude\-list\-glob\ \fIfilename\fR]*] [\-\-init] [\-\-restore] [\-\-decrypt | \-\-no\-decrypt | \-\-server\-decrypt | \-\-client\-decrypt] [\-\-exact_match] [\fB\-o\fR\ \fIconfigoption\fR...] \fIconfig\fR \fIhostname\fR [\fIdisk\fR\ [\ \fIdate\fR\ [\ \fIlevel\fR\ [\ \fIhostname\fR\ [\&.\&.\&.]\ ]\ ]\ ]]
+.SH "DESCRIPTION"
+.PP
+\fBAmfetchdump\fR
+pulls one or more matching dumps from tape or from the holding disk, handling the reassembly of multi\-tape split dump files as well as any tape autochanger operations\&. The dump are by default decompressed and decrypted\&.
+.PP
+It will automatically use the Amanda catalog to locate available dumps on tape, in the same way that the
+\fBfind\fR
+feature of
+\fBamadmin\fR(8)
+lists available dumps\&.
+.PP
+The
+\fIhostname\fR,
+\fIdiskname\fR,
+\fIdatestamp\fR, and
+\fIlevel\fR
+dump specifications are further described in
+\fBamanda-match\fR(7)\&. Note that at minimum a
+\fIhostname\fR
+must be specified\&.
+.PP
+Unless
+\fB\-p\fR
+is used, backup images are extracted to files in the current directory named:
+.PP
+\fIhostname\&.diskname\&.datestamp\&.dumplevel\fR
+.PP
+If a changer error occurs, or the
+\fB\-d\fR
+option is given, then amfetchdump prompts for each required volume\&.
+.SH "OPTIONS"
+.PP
+\fB\-p\fR
+.RS 4
+Pipe exactly one complete dump file to
+\fIstdout\fR, instead of writing the file to disk\&. This will restore only the first matching dumpfile (where "first" is determined by the dump log search facility)\&.
+.RE
+.PP
+\fB\-h\fR
+.RS 4
+Output the amanda header as a 32K block to same output as the image\&.
+.RE
+.PP
+\fB\-\-header\-fd\fR \fIfd\fR
+.RS 4
+Output the amanda header to the numbered file descriptor\&.
+.RE
+.PP
+\fB\-\-header\-file\fR \fIfilename\fR
+.RS 4
+Output the amanda header to the filename\&.
+.RE
+.PP
+\fB\-d\fR \fIdevice_or_changer\fR
+.RS 4
+Restore from this device or changer instead of the default, prompting for each volume\&.
+.RE
+.PP
+\fB\-O\fR \fIdirectory\fR
+.RS 4
+Output restored files to this directory, instead of to the current working directory\&.
+.RE
+.PP
+\fB\-c\fR
+.RS 4
+Compress output, fastest method available\&.
+.RE
+.PP
+\fB\-C\fR
+.RS 4
+Compress output, smallest file size method available\&.
+.RE
+.PP
+\fB\-\-decompress\fR
+.RS 4
+Always do the decompression, this is the default\&.
+.RE
+.PP
+\fB\-\-no\-decompress\fR
+.RS 4
+Never do the decompression\&.
+.RE
+.PP
+\fB\-\-server\-decompress\fR
+.RS 4
+Do the decompression only if the compression was done on the server\&.
+.RE
+.PP
+\fB\-\-client\-decompress\fR
+.RS 4
+Do the decompression only if the compression was done on the client\&.
+.RE
+.PP
+\fB\-\-decrypt\fR
+.RS 4
+Always do the decryption, this is the default\&.
+.RE
+.PP
+\fB\-\-no\-decrypt\fR
+.RS 4
+Never do the decryption\&.
+.RE
+.PP
+\fB\-\-server\-decrypt\fR
+.RS 4
+Do the decryption only if the encryption was done on the server\&.
+.RE
+.PP
+\fB\-\-client\-decrypt\fR
+.RS 4
+Do the decryption only if the encryption was done on the client\&.
+.RE
+.PP
+\fB\-\-init\fR
+.RS 4
+Prepare for a restore, some device require it for faster restore\&.
+.RE
+.PP
+\fB\-\-no\-restore\fR
+.RS 4
+Do not start the restore, useful with \-\-init\&.
+.RE
+.PP
+\fB\-\-exact\-match\fR
+.RS 4
+The host and disk are parsed as exact values
+.RE
+.PP
+\fB\-\-extract\fR
+.RS 4
+Extract the backup on the server in the
+\fItarget\fR
+path\&.
+.RE
+.PP
+\fB\-\-directory\fR \fIdirectory\fR
+.RS 4
+Deprecated, use \-\-target
+.RE
+.PP
+\fB\-\-target\fR \fItarget\fR
+.RS 4
+Where to extract the backup with the
+\fB\-\-extract\fR
+option\&.
+.sp
+Warning: All files in that path can be removed\&.
+.RE
+.PP
+\fB\-\-data\-path\fR amanda|directtcp
+.RS 4
+The data path to use with
+\fB\-\-extract\fR, the default is to use the fatest data path\&.
+.RE
+.PP
+\fB\-\-run\-client\-scripts\fR
+.RS 4
+Run the client script if it is set\&.
+.RE
+.PP
+\fB\-\-prev\-level\fR \fIlevel\fR
+.RS 4
+The previous level that was restored for this dle\&. If not set, run the pre\-recover script\&. If set, run the inter\-level\-recover script\&.
+.RE
+.PP
+\fB\-\-next\-level\fR \fIlevel\fR
+.RS 4
+The next level we will restore for this dle\&. If not set, run the post\-recover script\&.
+.RE
+.PP
+\fB\-\-application\-property\fR \fINAME=VALUE\fR
+.RS 4
+Application property to send to the application with
+\fB\-\-extract\&.\fR
+.RE
+.PP
+\fB\-\-include\-file\fR \fIfile\fR
+.RS 4
+The name of a file to restore\&.
+.RE
+.PP
+\fB\-\-include\-list\fR \fIfilename\fR
+.RS 4
+The name of a file containing file to restore\&.
+.RE
+.PP
+\fB\-\-include\-list\-glob\fR \fIfilename\fR
+.RS 4
+The name of a file containing file to restore using \-\-include\-list\-glob of the application\&.
+.RE
+.PP
+\fB\-\-exclude\-file\fR \fIfile\fR
+.RS 4
+The name of a file to exclude from the restore list\&.
+.RE
+.PP
+\fB\-\-exclude\-list\fR \fIfilename\fR
+.RS 4
+The name of a file containing file to exclude from the restore list\&.
+.RE
+.PP
+\fB\-\-exclude\-list\-glob\fR \fIfilename\fR
+.RS 4
+The name of a file containing file to exclude from the restore list using \-\-exclude\-list\-glob of the application\&.
+.RE
+.PP
+\fB\-\-release\-tapes\fR
+.RS 4
+Release the tapes already reserved for the restore\&.
+.RE
+.PP
+\fB\-\-reserve\-tapes\fR
+.RS 4
+Reserve the tapes needed for the restore\&.
+.RE
+.PP
+\fB\-l\fR
+.RS 4
+Leave dumps in the compressed/uncompressed and encrypted/unencrypted state in which they were found on tape\&. It is a synonym for
+\fB\-\-no\-decompression\fR
+and
+\fB\-\-no\-decryption\fR
+.RE
+.PP
+\fB\-a\fR
+.RS 4
+Assume that all tapes are already available, via tape changer or otherwise, instead of prompting the operator to ensure that all tapes are loaded\&.
+.RE
+.PP
+\fB\-n\fR
+.RS 4
+Do not reassemble split dump files at all, just restore each piece as an individual file\&.
+.RE
+.PP
+\fB\-o\fR \fIconfigoption\fR
+.RS 4
+See the "\fBCONFIGURATION OVERRIDE\fR" section in
+\fBamanda\fR(8)\&.
+.RE
+.SH "EXAMPLES"
+.PP
+All the examples here assume your configuration is called
+\fISetA\fR\&.
+.PP
+Here\*(Aqs a simple case, restoring all known dumps of the host vanya to the current working directory\&.
+.nf
+$ amfetchdump SetA vanya
+.fi
+.PP
+A more likely scenario involves restoring a particular dump from a particular date\&. We\*(Aqll pipe this one to
+\fBGNU\-tar\fR
+as well, to automatically extract the dump\&.
+.nf
+$ amfetchdump \-p SetA vanya /home 20051020 | gtar \-xvpf \-
+.fi
+.SH "CAVEATS"
+.PP
+\fBAmfetchdump\fR
+is dependent on accessing your server\*(Aqs config, tape changer, and (normally) dump logs\&. As such, it\*(Aqs not necessarily the most useful tool when those have all been wiped out and you desperately need to pull things from your tape\&. Pains have been taken to make it as capable as possible, but for seriously minimialist restores, look to
+\fBamrestore\fR(8)
+or
+\fBdd\fR(8)
+instead\&.
+.SH "SEE ALSO"
+.PP
+\fBamanda\fR(8),
+\fBamanda-match\fR(7),
+\fBamadmin\fR(8),
+\fBamrestore\fR(8)
+.PP
+The Amanda Wiki:
+: http://wiki.zmanda.com/
+.SH "AUTHORS"
+.PP
+\fBJohn Stange\fR <\&building@nap\&.edu\&>
+.RS 4
+National Academies Press
+.RE
+.PP
+\fBIan Turner\fR <\&ian@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE

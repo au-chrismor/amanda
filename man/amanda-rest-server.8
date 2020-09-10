@@ -1,0 +1,87 @@
+'\" t
+.\"     Title: amanda-rest-server
+.\"    Author: Jean-Louis Martineau <martineau@zmanda.com>
+.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
+.\"      Date: 12/01/2017
+.\"    Manual: System Administration Commands
+.\"    Source: Amanda 3.5.1
+.\"  Language: English
+.\"
+.TH "AMANDA\-REST\-SERVER" "8" "12/01/2017" "Amanda 3\&.5\&.1" "System Administration Commands"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+amanda-rest-server \- Start or stop the Amanda Rest Server
+.SH "SYNOPSIS"
+.HP \w'\fBamanda\-rest\-server\fR\ 'u
+\fBamanda\-rest\-server\fR [\-\-help] [\-\-version] [\-\-development] [start\ |\ stop]
+.SH "DESCRIPTION"
+.PP
+\fBamanda\-rest\-server\fR
+start the Amanda Rest Server\&.
+.SH "OPTIONS"
+.PP
+\-\-development
+.RS 4
+Help debugging server error\&.
+.RE
+.PP
+start
+.RS 4
+Start the Amanda Rest Server\&.
+.RE
+.PP
+stop
+.RS 4
+Stop the Amanda Rest Server\&.
+.RE
+.SH "CONFIGURATIONS"
+.PP
+The configurationmust be in the
+\fB/etc/amanda/amanda\&.conf\fR
+file\&.
+.PP
+\fBrest\-api\-port\fR \fIport\fR
+.RS 4
+The port the rest server is listening\&.
+.RE
+.PP
+\fBrest\-ssl\-cert\fR \fIstring\fR
+.RS 4
+The path to the certicate file for ssl connection\&.
+.RE
+.PP
+\fBrest\-ssl\-key\fR \fIstring\fR
+.RS 4
+The path to the key file for ssl connection\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBamanda\fR(8),
+\fBamanda\fR(8)
+.PP
+The Amanda Wiki:
+: http://wiki.zmanda.com/
+.SH "AUTHOR"
+.PP
+\fBJean\-Louis Martineau\fR <\&martineau@zmanda\&.com\&>
+.RS 4
+Zmanda, Inc\&. (http://www\&.zmanda\&.com)
+.RE
